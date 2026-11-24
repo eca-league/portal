@@ -1,0 +1,707 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ECA PORTAL — Admin</title><style>
+:root{--bg:#050914;--panel:#101a2c;--panel2:#16243a;--line:#31517d;--txt:#f7f8ff;--muted:#aab8d0;--lime:#ffc84a;--cyan:#42cfff;--gold:#ffdb72;--red:#ff7188}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 82% -8%,#164a83 0,transparent 38%),radial-gradient(ellipse at 8% 30%,#25184c 0,transparent 32%),var(--bg);color:var(--txt);font:14px/1.5 Inter,system-ui,Arial}button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:10px;background:#1a2a43;color:var(--txt);padding:10px 14px;font-weight:800}button:hover{border-color:var(--cyan);transform:translateY(-1px)}.primary{background:var(--lime);color:#101827;border-color:var(--lime)}.danger{color:var(--red)}.wrap{max-width:1240px;margin:auto;padding:24px 18px 70px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px;font-weight:950;letter-spacing:.12em}.crest{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 5px 12px #008cff55)}.brand{gap:14px}.brandText{display:flex;flex-direction:column;line-height:1.05}.brandText strong{font-size:clamp(18px,3vw,25px);letter-spacing:.12em}.brandText small{font-size:10px;color:var(--gold);letter-spacing:.2em;margin-top:7px}.eyebrow{font-size:10px;color:var(--lime);font-weight:900;letter-spacing:.2em}.top h1{font-size:clamp(24px,4vw,36px);margin:3px 0}.muted,.help{color:var(--muted)}.muted{font-size:12px}.pill{border:1px solid #51642b;color:var(--lime);border-radius:99px;padding:7px 12px;font-size:10px;font-weight:900;letter-spacing:.12em}.tabs{display:flex;gap:8px;margin:24px 0 14px;flex-wrap:wrap}.tabs button.active{background:var(--cyan);color:#061321;border-color:var(--cyan)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:linear-gradient(145deg,rgba(20,34,56,.98),rgba(12,21,37,.98));border:1px solid var(--line);border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 12px 32px #0003}.card h2{font-size:17px;margin:0 0 4px}.cardHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.tag{font-size:9px;letter-spacing:.14em;color:var(--cyan);font-weight:900}.fields{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:end}label{display:grid;gap:6px;color:var(--muted);font-size:11px;font-weight:700}input,select{width:100%;min-width:0;background:#091426;color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:11px 12px;outline:none}input:focus,select:focus{border-color:var(--cyan)}
+/* === CUSTOM MEMBER PICKER: MENU DARK NAVY, TEXT TERANG === */
+.memberPickerLabel{gap:9px;color:#f4d27a;font-size:12px;font-weight:900;letter-spacing:.045em}
+.slotPickerLabel{display:grid;gap:9px;min-width:0;color:#f4d27a;font-size:12px;font-weight:900;letter-spacing:.045em}
+.memberPicker{position:relative;width:100%;min-width:0}
+
+.memberSelectButton{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:60px;padding:15px 18px;background:linear-gradient(135deg,#142944,#0b1729);color:#f7f9ff;border:2px solid #b88a32;border-radius:13px;font-size:16px;font-weight:850;letter-spacing:.01em;text-align:left;box-shadow:0 5px 18px #0005,inset 0 1px #ffffff12;transition:border-color .18s,box-shadow .18s,background .18s}
+.memberSelectButton:hover{background:linear-gradient(135deg,#1b385b,#10213a);border-color:#f2c45b;box-shadow:0 0 0 3px #eab94b22,0 8px 22px #0006}
+.memberSelectButton:focus-visible,.memberSelectButton[aria-expanded="true"]{outline:none;border-color:#42cfff;box-shadow:0 0 0 4px #42cfff35,0 8px 22px #0006}
+.memberSelectButton #memberSelectValue{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.memberSelectChevron{color:#ffdb72;font-size:25px;line-height:1;transform:translateY(-3px);transition:transform .18s}
+.memberSelectButton[aria-expanded="true"] .memberSelectChevron{transform:rotate(180deg) translateY(2px)}
+.memberSelectMenu{position:absolute;z-index:1000;top:calc(100% + 8px);left:0;right:0;max-height:260px;overflow-y:auto;padding:7px;background:#0b1729;border:1px solid #42cfff;border-radius:13px;box-shadow:0 16px 36px #000c,0 0 0 2px #42cfff22}
+.memberSelectMenu[hidden]{display:none!important}
+.memberSearchWrap{position:sticky;top:0;z-index:2;padding:4px 4px 9px;background:#0b1729}
+.memberSearchInput{width:100%;min-height:42px;padding:10px 12px;border:1px solid #3c638c;border-radius:9px;background:#101f34;color:#f7f9ff;font-size:13px;font-weight:600}
+.memberSearchInput::placeholder{color:#91a5c1}
+.memberSearchCount{padding:3px 8px 7px;color:#91a5c1;font-size:11px;font-weight:600}
+.memberSelectOption{display:flex;align-items:center;min-height:48px;width:100%;padding:11px 13px;margin:0;border:1px solid transparent;border-radius:8px;background:transparent;color:#f7f9ff;text-align:left;font-size:15px;font-weight:750;letter-spacing:.01em;box-shadow:none;transform:none}
+.memberSelectOption:hover,.memberSelectOption:focus-visible{background:#173657;border-color:#42cfff;color:#fff;outline:none;transform:none}
+.memberSelectOption[aria-selected="true"]{background:#1b4264;border-color:#b88a32;color:#ffdf83}
+.memberSelectEmpty{padding:13px;color:#aab8d0;font-size:13px}
+@media(max-width:520px){.memberSelectButton{min-height:62px;font-size:16px;padding-left:15px}.memberPickerLabel{font-size:11px}.memberSelectOption{min-height:50px}}
+.list{display:grid;gap:8px;margin-top:13px}.rowItem{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0b1729;border:1px solid #243956;border-radius:11px;padding:10px 12px}.rowItem strong{overflow-wrap:anywhere}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:6px 9px;font-size:10px}.memberForm{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:end}.small{font-size:10px}.status{margin:12px 0;padding:11px 13px;border:1px solid #344d70;background:#0b1729;border-radius:10px;color:var(--cyan);font-size:12px}.season{display:grid;gap:14px}.seasonCreate{display:grid;grid-template-columns:minmax(220px,1fr) minmax(260px,1.2fr) auto;gap:16px;align-items:end}.seasonActive{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:16px;align-items:end}.seasonCard{padding:22px 24px}.seasonCard .cardHead{margin-bottom:20px}.seasonCard label{font-size:12px;gap:8px}.seasonCard input,.seasonCard select{min-height:46px}.createBtn{min-height:46px;min-width:158px;white-space:nowrap}.seasonActions{display:flex;gap:10px;align-items:end}.seasonActions button{min-height:46px;min-width:116px;white-space:nowrap}.seasonActions button{min-height:42px;white-space:nowrap}.brandLine{display:flex;align-items:center;gap:14px}.season select{min-height:46px}.card{border-color:#29466e;box-shadow:0 14px 36px #0005,inset 0 1px #ffffff08}.bracket{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.round{background:#0b1729;border:1px solid #233956;border-radius:12px;padding:10px;min-width:0}.round h3{font-size:10px;color:var(--lime);letter-spacing:.1em;margin:0 0 9px}.match{padding:8px;background:#14243a;border:1px solid #2a405e;border-radius:8px;margin:7px 0;font-size:10px}.matchLine{display:flex;justify-content:space-between;gap:6px;padding:3px 0}.score{color:var(--gold);font-weight:900}.doubleBracket{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:start}.doubleBracket .grandRound{border-color:#9b7830;background:linear-gradient(145deg,#302817,#111b2c)}.groupBracket{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.finalFourBracket{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.standingsAdmin{margin-top:16px}.round h3{overflow-wrap:anywhere}@media(max-width:850px){.doubleBracket,.groupBracket{grid-template-columns:repeat(2,minmax(0,1fr))}.finalFourBracket{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.doubleBracket,.groupBracket,.finalFourBracket{grid-template-columns:1fr}}
+.hidden{display:none!important}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.seasonCreate{grid-template-columns:1fr 1fr}.seasonCreate .createBtn{grid-column:1/-1}.seasonActive{grid-template-columns:1fr auto}.bracket{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.wrap{padding:17px 12px}.brand .crest{width:62px;height:62px}.fields,.memberForm,.seasonCreate,.seasonActive{grid-template-columns:1fr}.seasonCreate .createBtn,.seasonActions{grid-column:auto}.seasonActions{display:grid;grid-template-columns:1fr 1fr}.seasonCard{padding:18px 15px}.seasonCard .cardHead{align-items:flex-start}.bracket{grid-template-columns:1fr 1fr}.rowItem{align-items:flex-start}.actions{justify-content:flex-end}}
+
+/* === ADMIN BRACKET & SCORE INPUT REFINEMENT === */
+/* bracketArea itself is a host container, not a four-column bracket grid */
+#bracketArea{display:block!important;width:100%;min-width:0}
+#bracketArea>.doubleBracket,
+#bracketArea>.groupBracket,
+#bracketArea>.finalFourBracket,
+#bracketArea>.bracket{width:100%;min-width:0}
+.doubleBracket{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}
+.doubleBracket>.round{width:100%;min-width:0}
+.round{overflow:hidden}
+.match{width:100%;min-width:0;padding:10px 11px;margin:9px 0;border-radius:10px}
+.matchLine{align-items:flex-start;min-width:0;gap:10px}
+.matchLine>span:first-child{min-width:0;flex:1;overflow-wrap:anywhere;word-break:normal}
+.matchLine>.score{flex:0 0 auto;min-width:16px;text-align:right}
+.match .actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:7px;align-items:center;width:100%;margin-top:8px}
+.match .actions input,
+.match .actions input[type=number]{width:100%!important;min-width:0;padding:8px 9px!important;height:38px;text-align:center}
+.match .actions button{min-height:38px;padding:7px 12px;white-space:nowrap}
+.match .muted{overflow-wrap:anywhere}
+@media(max-width:850px){
+  #bracketArea>.doubleBracket{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #bracketArea>.groupBracket{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #bracketArea>.finalFourBracket{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){
+  #bracketArea>.doubleBracket,
+  #bracketArea>.groupBracket,
+  #bracketArea>.finalFourBracket,
+  #bracketArea>.bracket{grid-template-columns:minmax(0,1fr)}
+  #bracketArea .round{padding:12px}
+  #bracketArea .round h3{font-size:11px;margin-bottom:10px}
+  #bracketArea .match{padding:11px 12px;margin:9px 0;font-size:11px}
+  #bracketArea .matchLine{padding:4px 0;line-height:1.45}
+  #bracketArea .match .actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  #bracketArea .match .actions button{grid-column:1/-1;width:100%}
+  #bracketArea .match .actions input{height:40px}
+  #bracketArea .cardHead{align-items:flex-start;flex-wrap:wrap}
+}
+
+
+/* =========================================================
+   ECA ADMIN — MODERN ESPORTS CONTROL CENTER
+   Presentation-only refresh. Existing controls and logic stay.
+========================================================= */
+:root{
+  --bg:#070B16;--panel:#101A2D;--panel2:#172740;--line:#2A4266;
+  --txt:#F4F7FF;--muted:#9EACC7;--lime:#F6BD4B;--cyan:#38D5F2;
+  --gold:#FFE09A;--red:#FF7188;--violet:#8B7CFF;
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(ellipse at 86% -10%,rgba(28,112,184,.30),transparent 40%),
+    radial-gradient(ellipse at 4% 35%,rgba(92,55,170,.18),transparent 37%),
+    linear-gradient(145deg,#070B16 0%,#0A1020 58%,#080D19 100%);
+  color:var(--txt);letter-spacing:.005em
+}
+button,input,select{font:inherit}
+button{transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.wrap{max-width:1480px;padding:24px clamp(14px,3vw,42px) 80px}
+#cloudStatus{margin:0 0 9px!important;color:#AFC1DE!important}
+.top{align-items:center;gap:22px;padding:4px 0 16px}
+.brand{gap:15px}
+.crest{width:78px;height:78px;filter:drop-shadow(0 5px 18px rgba(56,213,242,.24))}
+.brandText strong{font-size:clamp(20px,2.1vw,29px);letter-spacing:.16em}
+.brandText small{color:var(--cyan);letter-spacing:.3em}
+.top h1{letter-spacing:-.035em}
+.eyebrow,.tag{color:var(--cyan)}
+.pill{border-color:rgba(56,213,242,.4);color:#FFE09A;background:rgba(12,28,48,.55)}
+.tabs{gap:9px;margin:20px 0 14px}
+.tabs button{
+  background:rgba(17,31,52,.9);border:1px solid #31496D;border-radius:12px;
+  padding:11px 16px;color:#DCE8FF;letter-spacing:.02em
+}
+.tabs button:hover{border-color:var(--cyan);background:#172B47}
+.tabs button.active{
+  background:linear-gradient(135deg,#3BD6F2,#1EB4D8);color:#061522;
+  border-color:#4DE0F8;box-shadow:0 8px 22px rgba(56,213,242,.14)
+}
+.card{
+  background:linear-gradient(145deg,rgba(18,34,57,.98),rgba(11,19,34,.98));
+  border:1px solid #2B4569;border-radius:20px;padding:20px;
+  box-shadow:0 17px 44px rgba(0,0,0,.23),inset 0 1px rgba(255,255,255,.045)
+}
+.card h2{letter-spacing:-.015em}
+.cardHead{margin-bottom:16px}
+input,select{
+  background:#091426;color:#F4F7FF;border:1px solid #365477;border-radius:11px;
+  padding:12px 13px;min-height:44px
+}
+input:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(56,213,242,.10)}
+button{
+  border:1px solid #365477;border-radius:11px;background:#192B45;color:#F4F7FF;
+  padding:10px 14px
+}
+button:hover{border-color:var(--cyan);box-shadow:0 7px 18px rgba(0,0,0,.16);transform:translateY(-1px)}
+button.primary,.primary{background:linear-gradient(135deg,#FFE08A,#F2B83D);color:#111827;border-color:#F6C45B}
+.danger{color:#FF8296}
+.seasonCard{padding:22px 24px}
+.seasonCard .cardHead{margin-bottom:18px}
+.seasonCard label{color:#B6C5DE}
+.seasonCard input,.seasonCard select{min-height:48px}
+.createBtn{min-height:48px}
+.seasonActions button{min-height:44px}
+.status{
+  background:#0B1729;border:1px solid #315276;border-radius:12px;
+  color:#65DDF5;padding:12px 14px
+}
+.rowItem{background:#0B1729;border:1px solid #2A4263;border-radius:12px;padding:11px 13px}
+.round{background:linear-gradient(160deg,#101D31,#0B1424);border:1px solid #2B4263;border-radius:13px}
+.round h3{color:#F6C75F}
+.match{background:#0A1424;border:1px solid #293F60;border-radius:10px;padding:11px}
+.score{color:#FFE09A}
+.memberSelectButton{
+  background:linear-gradient(135deg,#142944,#0B1729);border-color:#B88A32;
+  border-radius:13px;min-height:60px
+}
+.memberSelectMenu{background:#0B1729;border-color:#38D5F2}
+.memberSelectOption[aria-selected="true"]{background:#1B4264;color:#FFE09A}
+#adminLogin{background:rgba(5,9,20,.88)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#adminLoginForm{
+  border:1px solid #355A82!important;border-radius:20px!important;
+  background:linear-gradient(145deg,#14243B,#0B1424)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.06)
+}
+#adminLoginForm h2{letter-spacing:-.02em}
+#adminLoginForm button{background:linear-gradient(135deg,#FFE08A,#F2B83D);color:#111827;border:0}
+#bracketArea{min-width:0}
+#bracketArea .round{box-shadow:inset 0 1px rgba(255,255,255,.025)}
+@media(max-width:850px){
+  .wrap{padding:18px 15px 60px}
+  .grid{grid-template-columns:1fr}
+  .seasonCreate{grid-template-columns:1fr 1fr}
+  .seasonCreate .createBtn{grid-column:1/-1}
+  .seasonActive{grid-template-columns:1fr auto}
+}
+@media(max-width:650px){
+  .wrap{padding:14px 12px 44px}
+  .top{align-items:flex-start;gap:12px;padding-bottom:8px}
+  .brand{gap:10px}
+  .brand .crest{width:60px;height:60px}
+  .brandText strong{font-size:18px;letter-spacing:.12em}
+  .brandText small{font-size:9px;letter-spacing:.23em;margin-top:5px}
+  .top h1{font-size:clamp(26px,7vw,34px);margin:5px 0}
+  .tabs{margin:16px 0 12px;gap:7px}
+  .tabs button{padding:10px 11px;font-size:12px}
+  .card{padding:16px;border-radius:17px;margin:12px 0}
+  .seasonCard{padding:17px 15px}
+  .seasonCard .cardHead{align-items:flex-start;gap:10px}
+  .seasonCreate,.seasonActive,.fields,.memberForm{grid-template-columns:minmax(0,1fr)}
+  .seasonCreate .createBtn,.seasonActions{grid-column:auto}
+  .seasonActions{display:grid;grid-template-columns:1fr 1fr}
+  .seasonActions button{min-width:0}
+  .memberSelectButton{min-height:56px}
+  .doubleBracket,.groupBracket,.finalFourBracket{grid-template-columns:minmax(0,1fr)!important}
+  #bracketArea .match{font-size:12px}
+  #bracketArea .match .actions{grid-template-columns:1fr 1fr}
+  #bracketArea .match .actions button{grid-column:1/-1;width:100%}
+  .rowItem{align-items:flex-start;flex-wrap:wrap}
+}
+
+
+/* === ADMIN PRIMARY NAVIGATION: desktop row + mobile bottom dock === */
+.adminNav{
+  display:flex;align-items:center;gap:10px;margin:24px 0 16px;padding:0;
+}
+.adminNavItem{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:46px;padding:11px 17px;border:1px solid #31517d;border-radius:12px;
+  background:linear-gradient(145deg,#172943,#101b2e);color:#eaf2ff;
+  font-size:13px;font-weight:850;letter-spacing:.01em;white-space:nowrap;
+  box-shadow:inset 0 1px #ffffff08;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s;
+}
+.adminNavItem:hover{border-color:#42cfff;background:#1a3452;transform:translateY(-1px)}
+.adminNavItem.active{color:#071522;background:linear-gradient(135deg,#55dcf5,#20b8dc);border-color:#55dcf5;box-shadow:0 5px 18px #16c9ec24,inset 0 1px #ffffff55}
+.adminNavIcon{font-size:16px;line-height:1}
+@media(max-width:650px){
+  body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+  .wrap{padding-bottom:24px}
+  .adminNav{
+    position:fixed;z-index:9000;left:0;right:0;bottom:0;
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-areas:"impian members autentik";gap:5px;
+    margin:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    background:rgba(5,10,21,.96);border-top:1px solid #29466e;
+    box-shadow:0 -10px 28px #0007;backdrop-filter:blur(16px);
+  }
+  .adminNavItem{min-width:0;min-height:58px;padding:7px 4px;gap:3px;flex-direction:column;
+    border-radius:12px;font-size:10px;line-height:1.15;white-space:normal;text-align:center;
+  }
+  .adminNavItem[data-type="autentik"]{grid-area:autentik}
+  .adminNavItem[data-page="members"]{grid-area:members}
+  .adminNavItem[data-type="impian"]{grid-area:impian}
+  .adminNavIcon{font-size:19px}
+}
+
+
+
+/* =========================================================
+   ECA ADMIN — RESPONSIVE POLISH + PREMIUM NAVIGATION
+   Presentation-only overrides. Existing IDs and JS actions stay intact.
+========================================================= */
+html,body{max-width:100%;overflow-x:hidden}
+.wrap{width:100%;min-width:0}
+.adminNav{
+  width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;overflow:hidden;margin:22px 0 18px;padding:5px;
+  border:1px solid rgba(105,153,204,.58);border-radius:18px;
+  background:linear-gradient(110deg,#080d18 0%,#101c2c 48%,#080e1b 100%);
+  box-shadow:0 12px 30px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.12);
+}
+.adminNavItem{
+  position:relative;width:100%;min-width:0;min-height:76px;padding:12px 16px;
+  display:flex;flex-direction:row;align-items:center;justify-content:center;gap:12px;
+  border:0;border-radius:12px;background:transparent;color:#eaf2ff;
+  font-size:clamp(12px,1.15vw,15px);font-weight:850;line-height:1.2;
+  letter-spacing:.005em;white-space:normal;text-align:center;overflow:hidden;
+  box-shadow:none;transform:none;
+}
+.adminNavItem+ .adminNavItem{border-left:1px solid rgba(114,151,192,.32);border-radius:0}
+.adminNavItem:hover{background:linear-gradient(135deg,rgba(49,113,166,.24),rgba(14,31,53,.5));border-color:rgba(56,213,242,.6);box-shadow:none;transform:none}
+.adminNavItem.active{
+  color:#fff;background:linear-gradient(135deg,rgba(255,197,75,.22),rgba(16,53,83,.72) 58%,rgba(9,20,36,.9));
+  border:1px solid rgba(255,202,91,.68);border-radius:11px;
+  box-shadow:inset 0 1px rgba(255,255,255,.13),0 0 20px rgba(255,183,53,.10);
+}
+.adminNavIcon{flex:0 0 auto;font-size:clamp(22px,2.2vw,31px);line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}
+.adminNavItem>span:last-child{min-width:0;max-width:100%;overflow-wrap:anywhere}
+
+/* Draw all custom dropdown arrows as a proper CSS chevron in a small control. */
+.memberSelectButton{
+  width:100%;min-width:0;min-height:54px;padding:9px 10px 9px 15px;gap:12px;
+  border:1px solid rgba(196,145,46,.9);border-radius:13px;
+  background:linear-gradient(135deg,#142943 0%,#0a1527 100%);
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 5px 16px rgba(0,0,0,.22);
+  font-size:clamp(13px,1.2vw,15px);line-height:1.3;
+}
+.memberSelectButton>span:first-child{flex:1 1 auto;min-width:0;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+.memberSelectChevron{
+  position:relative;display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;
+  border:1px solid rgba(246,189,75,.34);border-radius:9px;
+  background:linear-gradient(145deg,rgba(246,189,75,.18),rgba(246,189,75,.07));
+  color:transparent;font-size:0;line-height:0;transform:none!important;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.memberSelectChevron::before{
+  content:"";display:block;width:8px;height:8px;margin-top:-4px;
+  border-right:2px solid #ffd36a;border-bottom:2px solid #ffd36a;
+  transform:rotate(45deg);transition:transform .2s ease,margin .2s ease;
+}
+.memberSelectButton:hover .memberSelectChevron{border-color:rgba(246,189,75,.72);background:rgba(246,189,75,.22);box-shadow:0 0 12px rgba(246,189,75,.12)}
+.memberSelectButton[aria-expanded="true"] .memberSelectChevron{border-color:rgba(56,213,242,.65);background:rgba(56,213,242,.14)}
+.memberSelectButton[aria-expanded="true"] .memberSelectChevron::before{margin-top:4px;transform:rotate(225deg);border-color:#55ddf5}
+.memberSelectMenu{max-width:100%;overscroll-behavior:contain}
+
+/* Native select controls also get a consistent arrow instead of browser defaults. */
+select{
+  appearance:none;-webkit-appearance:none;
+  padding-right:44px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m3.5 6 4.5 4.5L12.5 6' fill='none' stroke='%23FFD36A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:15px 15px;
+}
+
+/* Keep every form field and action inside its card on narrow screens. */
+.card,.cardHead,.grid,.seasonCreate,.seasonActive,.memberPickerLabel,.slotPickerLabel,#authField,#bracketArea,.round,.match{min-width:0;max-width:100%}
+input,select,textarea{max-width:100%;min-width:0}
+.cardHead{flex-wrap:wrap}
+.cardHead>div:first-child{min-width:0;flex:1 1 220px}
+.cardHead .actions{min-width:0;max-width:100%;flex-wrap:wrap;justify-content:flex-end}
+#addMember{max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.35}
+
+@media(max-width:850px){
+  .adminNav{margin:17px 0 14px}
+  .adminNavItem{min-height:68px;padding:10px 9px;gap:9px;font-size:13px}
+  .adminNavIcon{font-size:25px}
+  .seasonCreate{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .seasonCreate .createBtn{grid-column:1/-1;width:100%}
+  .seasonActive{grid-template-columns:minmax(0,1fr)}
+  .seasonActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .seasonActions button{width:100%;min-width:0}
+}
+@media(max-width:650px){
+  body{padding-bottom:calc(94px + env(safe-area-inset-bottom))}
+  .wrap{padding:13px 12px calc(20px + env(safe-area-inset-bottom));}
+  .top{align-items:flex-start;gap:10px}
+  .top>div{min-width:0;max-width:100%}
+  .top .pill{max-width:100%;white-space:normal}
+  .adminNav{
+    position:fixed;z-index:9000;left:0;right:0;bottom:0;
+    width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-areas:"impian members autentik";gap:5px;
+    margin:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+    border:0;border-top:1px solid rgba(92,143,194,.55);border-radius:0;
+    background:linear-gradient(180deg,rgba(8,15,28,.97),rgba(3,8,17,.99));
+    box-shadow:0 -10px 30px rgba(0,0,0,.62);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .adminNavItem,.adminNavItem+ .adminNavItem{
+    width:100%;min-width:0;max-width:100%;min-height:58px;padding:7px 3px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    border:1px solid rgba(74,112,157,.56);border-radius:12px;
+    background:linear-gradient(150deg,#172943,#0d192b);color:#dce8fb;
+    font-size:clamp(9px,2.55vw,11px);font-weight:850;line-height:1.12;
+    white-space:normal;text-align:center;overflow:hidden;box-shadow:inset 0 1px rgba(255,255,255,.06);
+  }
+  .adminNavItem:hover{transform:none;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+  .adminNavItem.active{
+    border:1px solid #e2ad43;border-radius:12px;
+    background:linear-gradient(155deg,#24415d,#12243a 70%,#101c2e);
+    color:#ffdf91;box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 15px rgba(245,183,65,.10);
+  }
+  .adminNavItem[data-type="autentik"]{grid-area:autentik}
+  .adminNavItem[data-page="members"]{grid-area:members}
+  .adminNavItem[data-type="impian"]{grid-area:impian}
+  .adminNavIcon{font-size:21px;line-height:1}
+  .adminNavItem>span:last-child{display:block;width:100%;max-width:100%;overflow-wrap:anywhere;word-break:normal}
+
+  .card{padding:14px;border-radius:16px;margin:11px 0}
+  .cardHead{align-items:flex-start;gap:9px}
+  .cardHead>div:first-child{flex-basis:100%}
+  .cardHead .actions{width:100%;justify-content:flex-start}
+  .grid,.grid[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+  .memberPickerLabel,.slotPickerLabel{width:100%;min-width:0}
+  .memberSelectButton{min-height:52px;padding:8px 9px 8px 13px;font-size:14px}
+  .memberSelectChevron{flex-basis:30px;width:30px;height:30px;border-radius:8px}
+  .memberSelectMenu{max-height:min(250px,42vh)}
+  .seasonCreate,.seasonActive,.fields,.memberForm{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+  .seasonCreate .createBtn{grid-column:auto;width:100%;white-space:normal}
+  .seasonActions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .seasonActions button{padding:10px 7px;font-size:12px}
+  .seasonCard{padding:15px 13px}
+  .seasonCard .cardHead{align-items:flex-start}
+  .seasonCard .cardHead .pill{flex:0 0 auto;max-width:112px;white-space:normal;text-align:center}
+  #addMember{width:100%;min-height:48px;padding:11px 12px;font-size:12px}
+  #bracketArea>.doubleBracket,#bracketArea>.groupBracket,#bracketArea>.finalFourBracket,#bracketArea>.bracket{grid-template-columns:minmax(0,1fr)!important}
+  #bracketArea .round{padding:11px}
+  #bracketArea .match{padding:10px;margin:8px 0}
+  #bracketArea .match .actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}
+  #bracketArea .match .actions input{width:100%!important;min-width:0}
+  #bracketArea .match .actions button{grid-column:1/-1;width:100%;white-space:normal}
+  .rowItem{align-items:flex-start;flex-wrap:wrap;overflow-wrap:anywhere}
+  .actions button{max-width:100%;white-space:normal}
+  .status{overflow-wrap:anywhere}
+}
+@media(max-width:360px){
+  .adminNav{gap:4px;padding-left:5px;padding-right:5px}
+  .adminNavItem,.adminNavItem+ .adminNavItem{font-size:9px;padding-left:2px;padding-right:2px}
+  .adminNavIcon{font-size:19px}
+  .seasonActions{grid-template-columns:minmax(0,1fr)}
+}
+
+
+/* Registration form link settings */
+.linkSettingsCard{margin:18px 0}
+.linkSettingsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.linkSettingsGrid label{display:grid;gap:7px;min-width:0;color:var(--gold);font-size:12px;font-weight:850}
+.linkSettingsGrid input{width:100%;min-width:0;max-width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#091426;color:var(--txt);outline:none}
+.linkSettingsGrid input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #42cfff22}
+.linkSaveRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap}
+#registrationLinkStatus{font-size:12px}
+@media(max-width:680px){.linkSettingsGrid{grid-template-columns:minmax(0,1fr)}.linkSaveRow{align-items:stretch}.linkSaveRow button{width:100%;min-height:46px}.linkSettingsCard .cardHead{align-items:flex-start}.linkSettingsCard .pill{white-space:nowrap}}
+
+.registrationTypePanel{display:grid;gap:14px;margin-top:16px;min-width:0}
+.registrationTypePanel[hidden]{display:none!important}
+.registrationLinkLabel{display:grid;gap:7px;min-width:0;color:var(--gold);font-size:12px;font-weight:850}
+.registrationLinkLabel input{width:100%;min-width:0;max-width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#091426;color:var(--txt);outline:none}
+.registrationLinkLabel input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #42cfff22}
+.registrationToggleRow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,#142943,#0d192b);min-width:0}
+.registrationToggleRow>div{display:grid;gap:4px;min-width:0}
+.registrationToggleRow strong{font-size:13px;color:var(--txt)}
+.registrationToggleRow small{font-size:11px;line-height:1.45;color:var(--muted)}
+.registrationToggleRow button{flex:0 0 auto;min-width:145px;min-height:42px}
+.registrationToggleRow button:disabled{opacity:.58;cursor:not-allowed;filter:saturate(.55)}
+@media(max-width:680px){.registrationToggleRow{align-items:stretch;flex-direction:column}.registrationToggleRow button{width:100%;min-height:44px}}
+
+
+/* === PRE-TOURNAMENT MEMBER REPLACEMENT === */
+.replacePanel{margin:0 0 16px;padding:15px;border:1px solid #8b6b31;border-radius:14px;background:linear-gradient(145deg,#1d2b3d,#101a2b)}
+.replacePanelHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.replacePanelHead strong{color:#ffe09a;font-size:13px;letter-spacing:.04em}
+.replaceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.replaceItem{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;align-items:center;gap:8px;padding:9px;background:#0b1729;border:1px solid #2a4263;border-radius:10px;min-width:0}
+.replaceItem label{min-width:0;color:#dce8ff;font-size:11px}
+.replaceItem select{min-width:0;padding:8px;font-size:12px}
+.replaceItem button{padding:8px 10px;font-size:11px;white-space:nowrap}
+.replaceLocked{padding:10px 12px;border-radius:9px;background:#301d28;color:#ffb4c0;font-size:12px}
+@media(max-width:700px){.replaceGrid{grid-template-columns:1fr}.replaceItem{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}.replaceItem button{grid-column:1/-1;width:100%}}
+
+/* Minimal floating member replacement */
+.replacePanel{margin:0 0 16px;padding:14px 15px;background:linear-gradient(145deg,#101d31,#0b1525);border:1px solid #29466e;border-radius:14px}
+.replacePanelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.replacePanelHead strong{font-size:11px;letter-spacing:.1em;color:var(--gold)}
+.replaceRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.replaceRosterItem{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:8px 10px;background:#0a1424;border:1px solid #243956;border-radius:9px}.replaceRosterName{display:flex;align-items:center;gap:9px;min-width:0}.replaceRosterName strong{overflow-wrap:anywhere;font-size:12px}.replaceSlot{display:grid;place-items:center;flex:0 0 25px;height:25px;border-radius:7px;background:#1a2e49;color:var(--gold);font-size:10px;font-weight:900}.replaceIconBtn{width:31px;height:30px;flex:0 0 31px;padding:0;border-radius:8px;color:var(--gold);font-size:18px;background:#172944;border-color:#6d572b}.replaceIconBtn:disabled{opacity:.35;cursor:not-allowed}.replaceLocked{margin-top:9px;color:#ffcf75;font-size:11px}
+.replacePopupBackdrop{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;padding:16px;background:#020711b8;backdrop-filter:blur(5px)}.replacePopupBackdrop[hidden]{display:none!important}.replacePopup{width:min(100%,410px);padding:18px;background:linear-gradient(150deg,#14243b,#091426);border:1px solid #b88a32;border-radius:17px;box-shadow:0 24px 70px #000d,0 0 0 1px #42cfff18}.replacePopupHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.replacePopupHead strong{font-size:17px}.replacePopupEyebrow{font-size:9px;letter-spacing:.17em;color:var(--cyan);font-weight:900;margin-bottom:3px}.replaceClose{width:31px;height:31px;padding:0;font-size:21px;line-height:1;color:#aab8d0;background:#1b2b43}.replaceCurrent{padding:10px 12px;border:1px solid #344d70;background:#0a1424;border-radius:10px;display:grid;gap:3px;margin-bottom:13px}.replaceCurrent span,.replaceAvailableTitle{font-size:9px;letter-spacing:.12em;color:var(--muted);font-weight:900}.replaceCurrent strong{font-size:13px;color:var(--gold)}.replaceSearchLabel{display:block;color:#f1d17b;font-size:11px;margin-bottom:6px}.replaceSearchWrap{display:flex;align-items:center;gap:9px;padding:0 11px;background:#081322;border:1px solid #31517d;border-radius:9px}.replaceSearchWrap:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px #42cfff18}.replaceSearchWrap span{font-size:21px;color:var(--cyan)}.replaceSearchWrap input{border:0;background:transparent;padding:11px 0;outline:none;box-shadow:none}.replaceAvailableTitle{margin:14px 0 7px}.replaceResults{display:grid;gap:6px;max-height:190px;overflow:auto}.replaceCandidate{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:10px 11px;background:#10233a;border:1px solid #29466e;border-radius:8px;font-size:12px}.replaceCandidate:hover,.replaceCandidate.selected{background:#173657;border-color:var(--cyan)}.replaceCandidateMark{color:var(--gold);font-size:16px}.replaceNoResults{padding:13px;text-align:center;color:var(--muted);font-size:11px;background:#0a1424;border-radius:8px}.replacePopupFoot{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:14px}.replacePopupFoot span{font-size:10px;color:var(--muted)}.replacePopupFoot button{font-size:10px;padding:10px 12px}.replacePopupFoot button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:560px){.replaceRoster{grid-template-columns:1fr}.replacePopup{padding:15px}.replacePopupFoot{align-items:stretch;flex-direction:column}.replacePopupFoot button{width:100%}}
+
+
+/* === MANAGE MEMBERS: PREMIUM COMPACT DASHBOARD (H) === */
+.memberDashboard{padding:22px 24px}
+.memberDashHead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:17px}
+.memberDashHead h2{margin:4px 0 3px;font-size:20px;letter-spacing:-.025em}
+.memberTotal{min-width:76px;padding:8px 12px;border:1px solid #294d70;border-radius:13px;background:linear-gradient(145deg,#142943,#0b1729);display:flex;flex-direction:column;align-items:center;gap:1px}
+.memberTotal strong{font-size:24px;line-height:1.1;color:#d6a84b;font-variant-numeric:tabular-nums}
+.memberTotal span{font-size:9px;font-weight:900;letter-spacing:.13em;color:#9fb2cc}
+.memberToolbar{display:grid;grid-template-columns:minmax(180px,1fr) minmax(150px,.72fr) auto;gap:9px;align-items:center}
+.memberSearch{display:flex;align-items:center;gap:9px;min-width:0;height:42px;padding:0 12px;border:1px solid #365477;border-radius:11px;background:#091426;color:#8da5c4}
+.memberSearch>span{font-size:21px;line-height:1}
+.memberSearch input{width:100%;min-width:0;min-height:38px;padding:7px 0;border:0!important;outline:0;background:transparent!important;box-shadow:none!important}
+.memberAddField input{width:100%;min-height:42px;padding:9px 12px}
+.memberAddButton{height:42px;white-space:nowrap;padding:9px 16px}
+.memberList{display:grid;gap:7px;margin-top:13px}
+.memberRow{display:flex;align-items:center;gap:11px;min-height:54px;padding:8px 11px;border-radius:12px;background:linear-gradient(100deg,#0d1b2e,#0a1627);border:1px solid #294362;transition:border-color .16s,background .16s}
+.memberRow:hover{border-color:#397b9b;background:linear-gradient(100deg,#11253b,#0b192b)}
+.memberIndex{font-size:10px;font-weight:900;letter-spacing:.08em;color:#6e87a7;font-variant-numeric:tabular-nums}
+.memberIdentity{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.memberAvatar{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:linear-gradient(145deg,#203a58,#12253d);border:1px solid #365477;color:#d6a84b;font-size:19px}
+.memberIdentity>div{display:grid;gap:2px;min-width:0}
+.memberIdentity strong{overflow-wrap:anywhere;font-size:13px;color:#f2f6ff}
+.memberIdentity small{font-size:8px;letter-spacing:.12em;font-weight:850;color:#7790b0}
+.memberActions{gap:6px;flex-wrap:nowrap}
+.memberActions .memberIconButton{width:31px;height:30px;display:grid;place-items:center;padding:0;border-radius:9px;font-size:15px;color:#63d8f1;background:#142942;border:1px solid #315477}
+.memberActions .memberIconButton.danger{color:#ff8296;background:#291a2a;border-color:#63394a}
+.memberEmpty{padding:16px 12px;text-align:center;border:1px dashed #34506f;border-radius:11px;color:#91a5c1;font-size:12px}
+.srOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:650px){.memberDashboard{padding:16px}.memberToolbar{grid-template-columns:minmax(0,1fr) auto}.memberSearch{grid-column:1/-1}.memberAddField{min-width:0}.memberAddButton{padding:9px 12px}.memberDashHead h2{font-size:18px}.memberRow{min-height:50px;padding:7px 9px}}
+
+/* ECA Portal login — Elegant Dark (login screen only) */
+#adminLogin.eca-login-overlay{position:fixed!important;inset:0!important;z-index:99999!important;display:flex;align-items:center;justify-content:center;padding:22px!important;overflow-y:auto;background:radial-gradient(ellipse at 50% 38%,rgba(30,48,75,.42),transparent 55%),linear-gradient(135deg,#050912 0%,#0b1422 52%,#050912 100%)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#adminLogin.eca-login-overlay:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,transparent 0 69%,rgba(214,166,61,.09) 69.1%,transparent 69.7%),linear-gradient(135deg,transparent 0 76%,rgba(214,166,61,.055) 76.1%,transparent 76.5%)}
+#adminLoginForm.eca-login-card{position:relative;width:min(410px,100%)!important;padding:30px 30px 24px!important;border:1px solid #34445d!important;border-radius:20px!important;background:linear-gradient(155deg,#172235 0%,#0d1727 58%,#0a1220 100%)!important;box-shadow:0 28px 80px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.045)!important;color:#f4f6fb!important;font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif!important}
+.eca-login-brand{display:flex;justify-content:center;margin:0 0 10px}
+.eca-login-brand img{width:78px;height:78px;object-fit:contain;filter:drop-shadow(0 5px 14px rgba(0,0,0,.35))}
+.eca-login-heading{text-align:center;margin-bottom:25px}
+.eca-login-kicker{font-size:9px;font-weight:850;letter-spacing:.2em;color:#d9aa48;margin-bottom:5px}
+#adminLoginForm .eca-login-heading h2{margin:0;color:#f5f6fa;font-size:27px;font-weight:900;letter-spacing:.045em}
+#adminLoginForm .eca-login-heading h2 span{color:#e0b64f}
+.eca-login-heading p{margin:3px 0 0;color:#aab7ca;font-size:13px}
+#adminLoginForm .eca-login-field{display:grid;gap:7px;margin:14px 0;color:#d5dcea;font-size:12px;font-weight:700}
+#adminLoginForm .eca-login-field input{box-sizing:border-box;width:100%;min-height:47px;padding:12px 14px;border:1px solid #354762;border-radius:10px;background:#091321;color:#f6f8fc;font:14px system-ui;outline:none;transition:border-color .18s,box-shadow .18s}
+#adminLoginForm .eca-login-field input::placeholder{color:#71819a}
+#adminLoginForm .eca-login-field input:focus{border-color:#c99d42;box-shadow:0 0 0 3px rgba(201,157,66,.13)}
+#adminLoginForm .eca-login-remember{display:flex;align-items:center;gap:9px;margin:15px 0 18px;color:#b9c4d5;font-size:12px;cursor:pointer}
+#adminLoginForm .eca-login-remember input{width:16px;height:16px;accent-color:#d6a83f}
+#adminLoginForm .eca-login-submit{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;padding:12px 16px;border:1px solid #e4b84f!important;border-radius:10px!important;background:linear-gradient(105deg,#e2b94f,#c9952e)!important;color:#111827!important;font-size:14px;font-weight:850;letter-spacing:.02em;cursor:pointer;box-shadow:0 8px 22px rgba(180,132,36,.15);transition:filter .18s,transform .18s}
+#adminLoginForm .eca-login-submit:hover{filter:brightness(1.07);transform:translateY(-1px)}
+#adminLoginForm .eca-login-submit span{font-size:19px;line-height:1}
+#adminLoginForm .eca-login-note{margin:17px 0 0;padding-top:14px;border-top:1px solid #293950;color:#8190a7;text-align:center;font-size:10px}
+#adminLoginForm .eca-login-message{margin:9px 0 0;color:#f2c66a;font-size:12px;text-align:center;overflow-wrap:anywhere}
+@media(max-width:480px){#adminLogin.eca-login-overlay{padding:14px!important}#adminLoginForm.eca-login-card{padding:25px 21px 20px!important;border-radius:17px!important}.eca-login-brand img{width:68px;height:68px}#adminLoginForm .eca-login-heading h2{font-size:24px}}
+
+
+.view{display:none}.view.active{display:block}.hidden{display:none!important}
+.dataGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.formRow{display:flex;gap:9px;align-items:end;flex-wrap:wrap}
+.formRow label{flex:1 1 180px}
+.tableWrap{overflow-x:auto}.dataTable{width:100%;border-collapse:collapse;min-width:520px}
+.dataTable th,.dataTable td{padding:12px 10px;text-align:left;border-bottom:1px solid #2b4569}
+.dataTable th{font-size:10px;color:#9eb2d0;letter-spacing:.1em}.dataTable td{font-size:12px}
+.inlineActions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.inlineActions button{padding:7px 10px;font-size:10px}.inlineActions button.saveText{background:transparent;border:0;box-shadow:none;color:#72e6a1;padding:7px 4px;font-size:11px;font-weight:900;letter-spacing:.04em;min-width:auto}.inlineActions button.saveText:hover{color:#a0ffc0;text-decoration:underline}
+.field{display:grid;gap:6px;color:#aab8d0;font-size:11px;font-weight:700}
+.field input,.field select{width:100%;min-height:42px}
+.matchRow{display:grid;grid-template-columns:minmax(90px,1fr) 48px 12px 48px minmax(90px,1fr) auto auto;gap:9px;align-items:center;padding:9px 11px;margin:7px 0;border:1px solid #2b4569;border-radius:10px;background:#0a1424;min-width:0}
+.matchRow .teamName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.matchRow .homeTeam{text-align:right}.matchRow .awayTeam{text-align:left}.scoreInput{width:48px!important;min-width:0;min-height:36px!important;height:36px;padding:5px!important;text-align:center;font-weight:850;color:#ffdf83!important;background:#0d1a2d!important;border:1px solid #355477!important;border-radius:8px!important}.scoreSeparator{text-align:center;color:#ffdf83;font-weight:900}.fixtureStatus{display:inline-block;padding:4px 8px;border-radius:99px;font-size:8px;letter-spacing:.06em;white-space:nowrap}.fixtureStatus.completed{color:#72e6a1;background:#123b2a;border:1px solid #28734b}.fixtureStatus.pending{color:#ffd778;background:#3a2d12;border:1px solid #8a6b2b}.matchRow .inlineActions{display:contents}.matchRow button.saveText{min-height:34px;padding:0 11px!important;border:1px solid #d9ad4b!important;border-radius:8px!important;background:linear-gradient(105deg,#f8d36c,#efb93e)!important;color:#172033!important;font-size:9px!important;font-weight:900!important;white-space:nowrap;letter-spacing:.02em!important}.matchRow button.saveText:hover{filter:brightness(1.06);text-decoration:none}
+.emptyState{padding:22px;border:1px dashed #3b5676;border-radius:12px;color:#9eacc7;text-align:center}
+@media(max-width:650px){
+  .dataGrid{grid-template-columns:1fr}
+  .matchRow{grid-template-columns:minmax(0,1fr) 40px 10px 40px minmax(0,1fr);grid-template-rows:auto auto;column-gap:7px;row-gap:8px;padding:10px 11px;margin:8px 0;font-size:12px;align-items:center}
+  .matchRow .teamName{font-size:11px;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+  .matchRow .homeTeam{text-align:right}.matchRow .awayTeam{text-align:left}
+  .scoreInput{width:40px!important;height:38px!important;min-height:38px!important;padding:4px!important;font-size:14px!important;border-radius:9px!important}
+  .scoreSeparator{font-size:14px}
+  .matchRow button.saveText{grid-column:1/4;grid-row:2;justify-self:stretch;width:100%;min-height:35px;padding:0 10px!important;font-size:10px!important;border-radius:9px!important}
+  .matchRow .fixtureStatus{grid-column:4/6;grid-row:2;justify-self:stretch;text-align:center;padding:7px 5px;font-size:9px;letter-spacing:.03em}
+  .matchRow .inlineActions{display:contents}
+}
+@media(max-width:360px){.matchRow{grid-template-columns:minmax(0,1fr) 36px 8px 36px minmax(0,1fr);column-gap:5px;padding:9px}.scoreInput{width:36px!important}.matchRow .teamName{font-size:10px}.matchRow button.saveText{font-size:9px!important}}
+
+
+.adminNav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:22px 0 18px;padding:5px;border:1px solid #29466e;border-radius:16px;background:#0b1424}
+.adminNavItem{min-height:62px;border:0;background:transparent;border-radius:11px;color:#eaf2ff;font-weight:900}
+.adminNavItem.active{background:linear-gradient(135deg,#55dcf5,#20b8dc);color:#061522}
+.adminView{display:none}.adminView.active{display:block}
+@media(max-width:650px){.adminNav{position:fixed;z-index:9000;left:0;right:0;bottom:0;margin:0;border-radius:0;background:rgba(5,10,21,.96);padding:8px 12px calc(8px + env(safe-area-inset-bottom))}.adminNavItem{min-height:58px}}
+.archiveTabs{display:flex;gap:8px;margin:14px 0 18px}.archiveTabs button{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:#0b1729;color:var(--text);font-weight:800}.archiveTabs button.active{background:var(--gold);color:#111}
+
+/* League member roster: compact, aligned and mobile-friendly */
+.rosterBlock{margin:15px 0 4px;padding:13px 14px;background:#0a1628;border:1px solid #263f60;border-radius:13px}
+.rosterHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px;color:#dce8fb;font-size:11px;letter-spacing:.06em}
+.rosterHead span{color:var(--cyan);font-weight:900;font-variant-numeric:tabular-nums}
+.roster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 10px;margin:0!important;min-width:0}
+.player{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;box-sizing:border-box;padding:6px 8px 6px 10px;border:1px solid #2a4565;border-radius:8px;background:#102038;color:#f5f8ff;font-size:12px;min-height:34px}
+.player b{overflow-wrap:anywhere;min-width:0}
+.player button{width:23px;height:23px;min-width:23px;padding:0!important;display:inline-grid;place-items:center;border-radius:7px;background:#202f49;font-size:15px;line-height:1}
+.rosterEmpty{font-size:12px;color:var(--muted);padding:3px 0}
+.leagueAddRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;margin-top:16px}
+.leagueAddRow .field{min-width:0}
+.leagueAddRow select{min-height:44px}
+.leagueAddRow>button{min-height:44px;white-space:nowrap;padding-inline:16px}
+.leagueAddRow>button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:520px){
+ .rosterBlock{padding:12px;margin-top:13px}
+ .leagueAddRow{grid-template-columns:minmax(0,1fr) auto;gap:7px}
+ .leagueAddRow>button{padding:10px 11px;font-size:11px;min-height:44px}
+ .leagueAddRow .field{font-size:10px}
+ .player{font-size:12px;min-height:36px}
+}
+@media(max-width:360px){.leagueAddRow{grid-template-columns:1fr}.leagueAddRow>button{width:100%}.roster{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.player{padding:6px 6px 6px 8px;font-size:11px}}
+
+
+/* Searchable league member picker: three quick suggestions before searching */
+.leagueAddRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}
+.memberPickerField{display:grid;gap:7px;min-width:0}
+.memberPickerField>label{color:var(--muted);font-size:11px;font-weight:800}
+.leagueMemberSearch{min-height:44px;width:100%;background:#091426;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.leagueMemberSearch::placeholder{color:#8194af}
+.leagueMemberOptions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.leagueMemberOption{min-width:0;min-height:36px;padding:7px 9px;border:1px solid #29466e;border-radius:8px;background:#101f34;color:#eaf3ff;font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leagueMemberOption:hover,.leagueMemberOption.selected{background:#173b5b;border-color:var(--cyan);color:#fff}
+.leagueMemberEmpty{grid-column:1/-1;padding:8px 2px;color:var(--muted);font-size:11px}
+.leagueMemberSelected{font-size:11px;color:var(--muted);min-height:16px}
+.leagueMemberSelected strong{color:var(--gold)}
+.leagueAddButton{min-height:44px;white-space:nowrap}
+@media(max-width:520px){.leagueAddRow{grid-template-columns:minmax(0,1fr);gap:9px}.leagueAddButton{width:100%;min-height:44px}.leagueMemberOptions{grid-template-columns:repeat(3,minmax(0,1fr))}.leagueMemberOption{padding:7px 5px;font-size:10px}}
+
+
+/* === PREMIUM MEMBER MANAGEMENT REFRESH === */
+:root{--panelGlow:rgba(56,213,242,.12)}
+.memberManagerCard,.tournamentLinkCard{
+ position:relative;overflow:hidden;padding:clamp(18px,3vw,26px);
+ background:linear-gradient(145deg,rgba(19,39,65,.98),rgba(9,18,33,.99));
+ border:1px solid rgba(82,133,184,.42);
+ box-shadow:0 20px 55px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.055);
+}
+.memberManagerCard:before,.tournamentLinkCard:before{
+ content:"";position:absolute;inset:0 0 auto;height:2px;
+ background:linear-gradient(90deg,transparent,#42d8f3,#f6c65b,transparent);opacity:.9
+}
+.memberManagerCard .cardHead,.tournamentLinkCard .cardHead{align-items:center;margin-bottom:20px}
+.memberManagerCard h2,.tournamentLinkCard h2{font-size:clamp(18px,2vw,22px);letter-spacing:.015em}
+.sectionKicker{display:block;color:#45d9f3;font-size:9px;font-weight:950;letter-spacing:.2em;margin-bottom:5px}
+.memberAddPanel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:11px;align-items:end;padding:15px;border:1px solid #29496c;border-radius:15px;background:linear-gradient(120deg,#10233b,#0b1729)}
+.memberAddPanel .primary{min-height:47px;min-width:150px}
+.searchPanel{margin:15px 0 5px}
+.memberManagerCard input,.tournamentLinkCard input{min-height:48px;border-radius:12px;background:#081426;border-color:#35577f}
+.memberManagerCard input::placeholder,.tournamentLinkCard input::placeholder{color:#8196b3}
+#memberList{gap:10px;margin-top:12px}
+#memberList .rowItem{min-height:58px;align-items:center;padding:11px 13px;border-radius:13px;background:linear-gradient(110deg,#10213a,#0b1728);border-color:#2c496d;transition:border-color .18s,transform .18s,box-shadow .18s}
+#memberList .rowItem:hover{border-color:#43cde9;transform:translateY(-1px);box-shadow:0 8px 20px #0003}
+#memberList .rowItem>strong{font-size:14px;letter-spacing:.01em}
+#memberList .inlineActions{display:flex;gap:7px}
+#memberList .inlineActions button{min-width:56px;min-height:34px;border-radius:10px;font-size:10px}
+#memberList .inlineActions button[data-edit-member]{background:#18314e;border-color:#3c648b;color:#dff7ff}
+#memberList .inlineActions button.danger{background:#291b2b;border-color:#714052;color:#ff9eae}
+.tournamentLinkCard{margin-top:16px}
+.linkOrb{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#244c70,#13273f);border:1px solid #3c7796;color:#65e5f7;font-size:23px}
+.linkActions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.linkActions .primary{min-height:44px}
+#tournamentLinkStatus{overflow-wrap:anywhere}
+.adminNav{border:1px solid rgba(105,153,204,.48);border-radius:17px;padding:5px;background:linear-gradient(110deg,#080d18,#101c2c 48%,#080e1b);box-shadow:0 12px 30px #0005}
+.adminNavItem{min-height:62px;border-radius:12px}
+.adminNavItem.active{background:linear-gradient(135deg,#54dff3,#1db8d9);color:#071522;box-shadow:0 7px 22px #1dc5e52c}
+@media(max-width:650px){
+ .memberManagerCard,.tournamentLinkCard{padding:17px 14px;border-radius:18px}
+ .memberManagerCard .cardHead,.tournamentLinkCard .cardHead{gap:8px;align-items:flex-start}
+ .memberAddPanel{grid-template-columns:1fr;padding:12px}
+ .memberAddPanel .primary{width:100%;min-height:48px}
+ #memberList .rowItem{min-height:56px;padding:10px 11px}
+ #memberList .rowItem>strong{font-size:13px}
+ .linkActions{align-items:stretch;flex-direction:column}
+ .linkActions .primary{width:100%}
+ .adminNavItem{min-height:60px}
+}
+
+/* Compact tournament URL settings, above Manage Member */
+.tournamentLinkCompact{padding:13px 15px;margin:0 0 13px;border-radius:14px;background:linear-gradient(110deg,#122944,#0b1729);border:1px solid #315779;box-shadow:0 10px 25px #0003}
+.compactLinkHeading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.compactLinkHeading>div{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.compactLinkHeading .sectionKicker{margin:0}
+.compactLinkHeading b{font-size:11px;letter-spacing:.07em}
+.compactLinkIcon{width:27px;height:27px;display:grid;place-items:center;border:1px solid #3d7594;border-radius:8px;color:#62def3;background:#173b58}
+.compactLinkForm{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.compactLinkForm input{min-width:0;width:100%;min-height:40px;padding:9px 11px;border:1px solid #35577f;border-radius:9px;background:#081426;color:#f4f7ff;font:inherit;font-size:12px}
+.compactLinkForm .primary{min-height:40px;padding:9px 14px;border-radius:9px;white-space:nowrap;font-size:10px}
+.compactLinkStatus{display:block;margin-top:6px;color:#9eacc7;font-size:10px;overflow-wrap:anywhere}
+@media(max-width:520px){.tournamentLinkCompact{padding:12px;margin-bottom:11px}.compactLinkForm{grid-template-columns:minmax(0,1fr) auto;gap:7px}.compactLinkForm .primary{padding:8px 10px;font-size:9px}}
+
+/* Manage Members — reference layout refinement */
+.memberManagerCard{padding:22px 24px}
+.memberDashHead{margin-bottom:17px}
+.memberDashHead .sectionKicker{display:block;color:var(--cyan);font-size:9px;font-weight:900;letter-spacing:.15em;margin-bottom:8px}
+.memberDashHead h2{text-transform:none;color:#f5f7ff}
+.memberTotal{min-width:80px;min-height:58px}
+.memberToolbar{margin-bottom:0}
+.memberAddField{display:block;min-width:0}
+.memberAddField input{height:42px}
+.memberAddButton{border-radius:12px;background:linear-gradient(135deg,#ffdc78,#f1b83f);color:#182033;border:1px solid #f5cf69;font-weight:900}
+.memberRow{width:100%}
+.memberActions{display:flex;align-items:center}
+.memberActions button{cursor:pointer}
+@media(max-width:650px){
+ .memberManagerCard{padding:16px}
+ .memberDashHead{align-items:flex-start}
+ .memberToolbar{grid-template-columns:minmax(0,1fr) auto;gap:8px}
+ .memberSearch{grid-column:1/-1}
+ .memberAddField{grid-column:1}
+ .memberAddButton{grid-column:2}
+ .memberRow{gap:9px}
+ .memberIndex{flex:0 0 22px}
+ .memberAvatar{width:33px;height:33px;flex-basis:33px}
+ .memberIdentity strong{font-size:12px}
+ .memberActions .memberIconButton{width:31px;height:31px}
+}
+
+</style></head><body>
+<main class="wrap">
+<header class="top"><div class="brand"><img class="crest" src="data:image/webp;base64,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" alt="ECA Alliance Logo" decoding="async"><div class="brandText"><strong>ECA PORTAL</strong><small>LEAGUE</small></div></div></header>
+<nav class="adminNav"><button class="adminNavItem active" data-page="members">👥 &nbsp; MANAGE MEMBER</button><button class="adminNavItem" data-page="league">🏆 &nbsp; LEAGUE</button></nav>
+<section id="page-members" class="adminView active">
+<section class="card tournamentLinkCompact">
+<div class="compactLinkHeading"><div><span class="sectionKicker">TOURNAMENT SETTINGS</span><b>TOURNAMENT WEBSITE LINK</b></div><span class="compactLinkIcon">↗</span></div>
+<div class="compactLinkForm"><input id="tournamentWebsiteUrl" type="url" inputmode="url" placeholder="https://website-tournament.com" aria-label="URL website tournament"><button class="primary" id="saveTournamentLink">SAVE LINK</button></div>
+<small class="compactLinkStatus" id="tournamentLinkStatus">No saved links yet.</small>
+</section>
+<section class="card memberManagerCard memberDashboard">
+<div class="memberDashHead"><div><span class="sectionKicker">PLAYER DATABASE</span><h2>Manage Members</h2><p class="muted">Manage your registered players</p></div><div class="memberTotal"><strong id="memberCount">79</strong><span>MEMBERS</span></div></div>
+<div class="memberToolbar">
+<label class="memberSearch"><span aria-hidden="true">⌕</span><span class="srOnly">Search username</span><input id="searchMember" type="search" placeholder="Search username..." autocomplete="off"></label>
+<label class="memberAddField"><span class="srOnly">New username</span><input id="newMember" placeholder="Example: grenvin" autocomplete="off"></label>
+<button class="primary memberAddButton" id="addMember">＋ Add</button>
+</div>
+<div id="memberList" class="memberList"></div>
+</section>
+</section>
+<section id="page-league" class="adminView"><section class="card"><div class="cardHead"><div><h2>LEAGUE MANAGEMENT</h2><p class="muted"></p></div><span class="pill">LEAGUE</span></div><div class="formRow"><label class="field">NAME LEAGUE<input id="leagueName" placeholder="Contoh: PRO ECA"></label><label class="field">DATE OF PLAY<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="leagueStart" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" aria-label="Tanggal mulai"><input id="leagueEnd" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" aria-label="Tanggal selesai"></div></label><label class="field">CAPACITY<input id="leagueCapacity" type="number" min="2" max="100" value="10" placeholder="10"></label><button class="primary" id="createLeague">CREATE LEAGUE</button></div></section><div id="leagueAdmin"></div></section>
+</main>
+<div id="adminLogin" style="position:fixed;inset:0;z-index:10000;display:none;place-items:center;padding:20px;background:#050914ef"><form id="loginForm" style="width:min(420px,100%);padding:26px;border-radius:18px;background:#14243b;border:1px solid #355a82"><div class="eyebrow">ECA PORTAL</div><h2>Admin Access</h2><p class="muted">Login menggunakan akun administrator Supabase.</p><label class="field">EMAIL<input id="adminEmail" type="email" autocomplete="username" placeholder="Email admin" required></label><label class="field">PASSWORD<input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password admin" required></label><p class="statusLine" id="loginError"></p><button class="primary" style="width:100%;margin-top:12px">LOGIN</button><p class="muted">Gunakan email dan password yang dibuat di Supabase Authentication.</p></form></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://oeuiyndhnikoebrpaywh.supabase.co',SUPABASE_PUBLISHABLE_KEY='sb_publishable_duB9wYAsurVD0gFf3Y-EXw_jf8vh09e';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const KEY='eca_portal_new_v1',AUTH='eca_admin_session_v1',blank={members:[],leagues:[],tournaments:[]};
+let showArchivedAdmin=false,cloudReady=false,writeQueue=Promise.resolve(),activeAdminId=null;
+function isArchived(l){if(l.archived===true)return true;if(l.archived===false)return false;if(!l.endDate)return false;return l.endDate<new Date().toISOString().slice(0,10)}
+function data(){try{return Object.assign(structuredClone(blank),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return structuredClone(blank)}}
+function save(d){localStorage.setItem(KEY,JSON.stringify(d));render();if(cloudReady){writeQueue=writeQueue.then(async()=>{const {error}=await supabaseClient.from('portal_state').upsert({id:1,data:d,updated_at:new Date().toISOString()},{onConflict:'id'});if(error){console.error('Supabase save error:',error);$('loginError').textContent='Gagal menyimpan ke cloud: '+error.message}}).catch(err=>console.error(err))}}
+async function loadCloudData(){const {data:row,error}=await supabaseClient.from('portal_state').select('data').eq('id',1).maybeSingle();if(error)throw error;const local=data();if(row&&row.data){const remote=Object.assign(structuredClone(blank),row.data);const empty=!remote.members.length&&!remote.leagues.length&&!remote.tournaments.length&&!remote.tournamentWebsiteUrl;if(empty&&(local.members.length||local.leagues.length||local.tournaments.length||local.tournamentWebsiteUrl)){const {error:upErr}=await supabaseClient.from('portal_state').upsert({id:1,data:local},{onConflict:'id'});if(upErr)throw upErr;localStorage.setItem(KEY,JSON.stringify(local))}else localStorage.setItem(KEY,JSON.stringify(remote))}else{const {error:upErr}=await supabaseClient.from('portal_state').upsert({id:1,data:local},{onConflict:'id'});if(upErr)throw upErr}cloudReady=true;render();renderTournamentLink()}
+async function verifyAdmin(user){const {data:admin,error}=await supabaseClient.from('portal_admins').select('user_id').eq('user_id',user.id).maybeSingle();if(error)throw error;if(!admin)throw new Error('Akun ini belum terdaftar sebagai administrator.');activeAdminId=user.id}
+async function startAdminSession(user){await verifyAdmin(user);await loadCloudData();$('adminLogin').style.display='none';supabaseClient.channel('portal-admin-live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'portal_state',filter:'id=eq.1'},payload=>{if(payload.new?.data){localStorage.setItem(KEY,JSON.stringify(Object.assign(structuredClone(blank),payload.new.data)));render();renderTournamentLink()}}).subscribe()}
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),fmtDate=s=>{if(!s||s==='TBA')return 'TBA';let [y,m,d]=s.split('-');return `${d}/${m}/${y}`},parseDmy=s=>{let v=String(s||'').trim(),m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!m)return null;let d=Number(m[1]),mo=Number(m[2]),y=Number(m[3]),dt=new Date(y,mo-1,d);return dt.getFullYear()===y&&dt.getMonth()===mo-1&&dt.getDate()===d?`${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`:null},dateRange=l=>l.startDate&&l.endDate?fmtDate(l.startDate)+' - '+fmtDate(l.endDate):'Tanggal bermain belum diatur';
+function openPage(p){document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p));document.querySelectorAll('.adminView').forEach(v=>v.classList.toggle('active',v.id==='page-'+p))}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginError').textContent='Sedang login...';const {data:authData,error}=await supabaseClient.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});if(error){$('loginError').textContent='Login gagal: '+error.message;return}try{await startAdminSession(authData.user)}catch(err){await supabaseClient.auth.signOut();$('loginError').textContent=err.message||'Akun tidak memiliki akses admin.'}});
+function renderMembers(){let d=data(),q=$('searchMember').value.trim().toLowerCase();$('memberCount').textContent=String(d.members.length);let list=d.members.filter(m=>m.toLowerCase().includes(q));$('memberList').innerHTML=list.length?list.map(m=>{let no=String(d.members.indexOf(m)+1).padStart(2,'0');return `<div class="memberRow"><span class="memberIndex">${no}</span><div class="memberIdentity"><span class="memberAvatar" aria-hidden="true">♟</span><div><strong>${esc(m)}</strong><small>PLAYER ${no}</small></div></div><div class="memberActions"><button type="button" class="memberIconButton" data-edit-member="${encodeURIComponent(m)}" aria-label="Edit ${esc(m)}" title="Edit username">✎</button><button type="button" class="memberIconButton danger" data-delete-member="${encodeURIComponent(m)}" aria-label="Delete ${esc(m)}" title="Delete member">⌫</button></div></div>`}).join(''):'<div class="memberEmpty">No members found. Add a player above.</div>'}
+function renderLeagues(){let d=data();const visible=d.leagues.filter(l=>isArchived(l)===showArchivedAdmin);$('leagueAdmin').innerHTML='<div class="archiveTabs"><button type="button" data-archive-tab="0" class="'+(!showArchivedAdmin?'active':'')+'">ACTIVE LEAGUE</button><button type="button" data-archive-tab="1" class="'+(showArchivedAdmin?'active':'')+'">ARCHIVE ('+d.leagues.filter(isArchived).length+')</button></div>'+(visible.length?visible.map(l=>{l.teams=l.teams||[];l.matches=l.matches||[];let cap=Number(l.capacity||10),full=l.teams.length>=cap,generated=!!l.fixturesGenerated,available=d.members.filter(m=>!l.teams.some(t=>t.name.toLowerCase()===m.toLowerCase()));let rounds={};l.matches.forEach(m=>(rounds[m.round||1]??=[]).push(m));return `<section class="card"><div class="cardHead"><div><h2>${esc(l.name)}</h2><p class="muted">${esc(dateRange(l))}</p><p class="muted">MEMBER: <b>${l.teams.length}/${cap}</b> ${full?'• LOCKED REGISTRATION':'• Waiting for Members'}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" data-archive-league="${l.id}">${isArchived(l)?'RESTORE LEAGUE':'ARCHIVE LEAGUE'}</button><button class="danger" data-delete-league="${l.id}">DELETE LEAGUE</button></div></div><div class="formRow leagueAddRow"><div class="field memberPickerField"><label for="memberSearch-${l.id}">CHOISE MEMBER</label><input class="leagueMemberSearch" type="search" id="memberSearch-${l.id}" data-member-search="${l.id}" placeholder="Search Member.." autocomplete="off" ${full?'disabled':''}><div class="leagueMemberOptions" id="memberOptions-${l.id}">${available.length?available.slice(0,3).map(m=>`<button type="button" class="leagueMemberOption" data-pick-league-member="${l.id}" data-username="${esc(m)}">${esc(m)}</button>`).join(''):'<span class="leagueMemberEmpty">No members available.</span>'}</div><div class="leagueMemberSelected" id="memberSelected-${l.id}">No member selected.</div><input type="hidden" id="member-${l.id}" value=""></div><button class="primary leagueAddButton" data-add-member-league="${l.id}" ${full||!available.length?'disabled':''}>＋ TAMBAH MEMBER</button></div><div class="rosterBlock"><div class="rosterHead"><b>REGISTERED MEMBER</b><span>${l.teams.length}/${cap}</span></div><div class="roster">${l.teams.map(t=>`<span class="player"><b>${esc(t.name)}</b> ${!generated?`<button class="danger" data-remove-team="${l.id}|${encodeURIComponent(t.name)}" aria-label="Hapus ${esc(t.name)}">×</button>`:''}</span>`).join('')||'<span class="rosterEmpty">Belum ada member yang ditambahkan.</span>'}</div></div>${generated?`<div class="status">AUTO FIXTURE • ${l.matches.length} MATCHES • HOME & AWAY</div>${(()=>{const total=l.matches.length,done=l.matches.filter(m=>m.homeScore!=null&&m.awayScore!=null).length,pct=total?Math.round(done/total*100):0;return `<div style="margin:14px 0 18px;padding:13px;background:#0b1729;border:1px solid var(--line);border-radius:11px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px"><b>LEAGUE PROGRESS</b><strong style="color:var(--gold)">${done}/${total} Matches Completed</strong></div><div style="height:9px;background:#263b56;border-radius:99px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--lime);border-radius:99px"></div></div><small class="muted">${pct}% Done</small></div>`})()}<h3 style="margin:18px 0 10px">FIXTURES & SCORE</h3>${Object.keys(rounds).sort((a,b)=>Number(a)-Number(b)).map(r=>`<h3 style="margin:16px 0 8px;color:var(--cyan)">MATCHDAY ${r}</h3>${rounds[r].map(m=>`<div class="matchRow"><span class="teamName homeTeam"><b>${esc(m.home)}</b></span><input class="scoreInput" type="number" min="0" id="hs-${l.id}-${m.id}" value="${m.homeScore??''}" placeholder="–" aria-label="Skor ${esc(m.home)}"><span class="scoreSeparator">:</span><input class="scoreInput" type="number" min="0" id="as-${l.id}-${m.id}" value="${m.awayScore??''}" placeholder="–" aria-label="Skor ${esc(m.away)}"><span class="teamName awayTeam"><b>${esc(m.away)}</b></span><button class="saveText" data-save-score="${l.id}|${m.id}">SAVE SCORE</button><b class="fixtureStatus ${(m.homeScore!==null&&m.homeScore!==undefined&&m.awayScore!==null&&m.awayScore!==undefined)?'completed':'pending'}">${(m.homeScore!==null&&m.homeScore!==undefined&&m.awayScore!==null&&m.awayScore!==undefined)?'COMPLETED':'PENDING'}</b></div>`).join('')}`).join('')}`:`<p class="muted">Fixture akan dibuat dan pendaftaran dikunci otomatis setelah kapasitas ${cap} member terpenuhi.</p>`}</section>`}).join(''):'<div class="emptyState">'+(showArchivedAdmin?'Belum ada league di arsip.':'Belum ada league aktif. Buat league pertama di atas.')+'</div>')}
+function updateLeagueMemberOptions(id,query=''){const d=data(),l=d.leagues.find(x=>x.id===Number(id));if(!l)return;const used=(l.teams||[]).map(t=>t.name.toLowerCase()),all=d.members.filter(m=>!used.includes(m.toLowerCase()));const q=query.trim().toLowerCase(),matches=q?all.filter(m=>m.toLowerCase().includes(q)):all.slice(0,3),box=$('memberOptions-'+id);if(!box)return;box.innerHTML=matches.length?matches.map(m=>`<button type="button" class="leagueMemberOption" data-pick-league-member="${id}" data-username="${esc(m)}">${esc(m)}</button>`).join(''):'<span class="leagueMemberEmpty">Username tidak ditemukan.</span>'}
+document.addEventListener('input',e=>{const input=e.target.closest('[data-member-search]');if(!input)return;const id=input.dataset.memberSearch,hidden=$('member-'+id),selected=$('memberSelected-'+id);if(hidden)hidden.value='';if(selected)selected.textContent='No member selected.';updateLeagueMemberOptions(id,input.value)});
+function render(){renderMembers();renderLeagues();if($('tournamentWebsiteUrl'))renderTournamentLink()}
+$('addMember').onclick=()=>{let n=$('newMember').value.trim(),d=data();if(!n)return alert('Masukkan username.');if(d.members.some(x=>x.toLowerCase()===n.toLowerCase()))return alert('Member sudah ada.');d.members.push(n);$('newMember').value='';save(d)};
+$('searchMember').oninput=renderMembers;
+function renderTournamentLink(){const d=data(),url=String(d.tournamentWebsiteUrl||'');$('tournamentWebsiteUrl').value=url;$('tournamentLinkStatus').textContent=url?'Link aktif: '+url:'No saved links yet.'}
+$('saveTournamentLink').onclick=()=>{const raw=$('tournamentWebsiteUrl').value.trim(),d=data();if(!raw){delete d.tournamentWebsiteUrl;save(d);renderTournamentLink();return alert('Link tournament dihapus.')}let url;try{url=new URL(raw)}catch(e){return alert('Masukkan URL website yang valid.')}if(!['http:','https:'].includes(url.protocol))return alert('Link harus diawali http:// atau https://');d.tournamentWebsiteUrl=url.href;save(d);renderTournamentLink();alert('Link website tournament berhasil disimpan.')};
+function createDoubleRoundRobin(l){let names=l.teams.map(t=>t.name),pool=names.slice();for(let i=pool.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}if(pool.length%2)pool.push(null);let n=pool.length,rotation=pool.slice(),first=[];for(let r=0;r<n-1;r++){let games=[];for(let i=0;i<n/2;i++){let a=rotation[i],b=rotation[n-1-i];if(a&&b){if((r+i)%2)games.push({home:b,away:a});else games.push({home:a,away:b})}}first.push(games);rotation=[rotation[0],rotation[n-1],...rotation.slice(1,n-1)]}let totalRounds=(n-1)*2,start=l.startDate?new Date(l.startDate+'T12:00:00'):null,end=l.endDate?new Date(l.endDate+'T12:00:00'):null;function roundDate(round){if(!start||!end)return 'TBA';let span=Math.max(0,Math.round((end-start)/86400000)),offset=totalRounds<=1?0:Math.round((round-1)*span/(totalRounds-1)),d=new Date(start);d.setDate(d.getDate()+offset);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}let all=[];first.forEach((games,i)=>games.forEach(g=>all.push({id:Date.now()+all.length+Math.random(),round:i+1,home:g.home,away:g.away,date:roundDate(i+1),homeScore:null,awayScore:null})));first.forEach((games,i)=>games.forEach(g=>{let round=i+1+(n-1);all.push({id:Date.now()+all.length+Math.random(),round,home:g.away,away:g.home,date:roundDate(round),homeScore:null,awayScore:null})}));l.matches=all;l.fixturesGenerated=true}
+$('createLeague').onclick=()=>{let n=$('leagueName').value.trim(),startRaw=$('leagueStart').value,endRaw=$('leagueEnd').value,startDate=parseDmy(startRaw),endDate=parseDmy(endRaw),capacity=Math.max(2,Math.min(100,Number($('leagueCapacity').value)||10)),d=data();if(!n)return alert('Masukkan nama league.');if(!startDate||!endDate)return alert('Masukkan tanggal dengan format DD/MM/YYYY yang valid. Contoh: 01/11/2026.');if(endDate<startDate)return alert('Tanggal selesai tidak boleh sebelum tanggal mulai.');if(d.leagues.some(l=>l.name.toLowerCase()===n.toLowerCase()))return alert('Nama league sudah digunakan.');d.leagues.unshift({id:Date.now(),name:n,startDate,endDate,capacity,teams:[],matches:[],fixturesGenerated:false,archived:false});$('leagueName').value='';$('leagueStart').value='';$('leagueEnd').value='';$('leagueCapacity').value='10';save(d)};
+document.addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;let d=data();
+ if(b.dataset.editMember){let oldName=decodeURIComponent(b.dataset.editMember),newName=prompt('Ganti username member:',oldName);if(newName===null)return;newName=newName.trim();if(!newName)return alert('Username tidak boleh kosong.');if(d.members.some(x=>x.toLowerCase()===newName.toLowerCase()&&x.toLowerCase()!==oldName.toLowerCase()))return alert('Username sudah digunakan member lain.');if(newName===oldName)return;d.members=d.members.map(x=>x===oldName?newName:x);d.leagues.forEach(l=>{(l.teams||[]).forEach(t=>{if(t.name.toLowerCase()===oldName.toLowerCase())t.name=newName});(l.matches||[]).forEach(m=>{if(String(m.home||'').toLowerCase()===oldName.toLowerCase())m.home=newName;if(String(m.away||'').toLowerCase()===oldName.toLowerCase())m.away=newName})});save(d);alert('Username berhasil diperbarui. Data league dan fixture tetap tersimpan.')}
+ if(b.dataset.deleteMember){let n=decodeURIComponent(b.dataset.deleteMember);if(confirm('Hapus member '+n+'?')){d.members=d.members.filter(x=>x!==n);d.leagues.forEach(l=>{l.teams=(l.teams||[]).filter(t=>t.name.toLowerCase()!==n.toLowerCase());l.matches=(l.matches||[]).filter(m=>m.home.toLowerCase()!==n.toLowerCase()&&m.away.toLowerCase()!==n.toLowerCase())});save(d)}}
+ if(b.dataset.archiveTab!==undefined){showArchivedAdmin=b.dataset.archiveTab==='1';renderLeagues()}
+ if(b.dataset.archiveLeague){let l=d.leagues.find(x=>x.id===Number(b.dataset.archiveLeague));if(l){l.archived=!isArchived(l);save(d)}}
+ if(b.dataset.deleteLeague){if(confirm('Hapus league beserta seluruh data?')){d.leagues=d.leagues.filter(l=>l.id!==Number(b.dataset.deleteLeague));save(d)}}
+ if(b.dataset.pickLeagueMember){let id=Number(b.dataset.pickLeagueMember),n=b.dataset.username,hidden=$('member-'+id),selected=$('memberSelected-'+id),search=$('memberSearch-'+id);if(hidden)hidden.value=n;if(selected)selected.innerHTML='Dipilih: <strong>'+esc(n)+'</strong>';document.querySelectorAll('[data-pick-league-member="'+id+'"]').forEach(x=>x.classList.toggle('selected',x===b));if(search)search.value='';updateLeagueMemberOptions(id,'');return}
+ if(b.dataset.addMemberLeague){let id=Number(b.dataset.addMemberLeague),l=d.leagues.find(x=>x.id===id),n=$('member-'+id).value;if(!n)return alert('Tambahkan username member melalui MANAGE MEMBER terlebih dahulu.');if(!d.members.some(m=>m.toLowerCase()===n.toLowerCase()))return alert('Username tidak ditemukan di MANAGE MEMBER.');if(l.teams.some(t=>t.name.toLowerCase()===n.toLowerCase()))return alert('Member sudah terdaftar di league ini.');l.teams.push({name:n});if(l.teams.length>=Number(l.capacity||10)){createDoubleRoundRobin(l);alert('Kapasitas penuh! '+l.matches.length+' fixture home & away berhasil dibuat otomatis.')}save(d)}
+ if(b.dataset.removeTeam){let [id,n]=b.dataset.removeTeam.split('|'),l=d.leagues.find(x=>x.id===Number(id)),name=decodeURIComponent(n);if(l.fixturesGenerated)return alert('Member tidak dapat dihapus setelah fixture dibuat.');if(confirm('Hapus member dari league?')){l.teams=l.teams.filter(t=>t.name!==name);save(d)}}
+ if(b.dataset.saveScore){let [lid,mid]=b.dataset.saveScore.split('|'),l=d.leagues.find(x=>x.id===Number(lid)),m=l.matches.find(x=>x.id===Number(mid)),hs=$('hs-'+lid+'-'+mid).value,as=$('as-'+lid+'-'+mid).value;if(hs===''||as===''||Number(hs)<0||Number(as)<0)return alert('Masukkan kedua score yang valid.');m.homeScore=Number(hs);m.awayScore=Number(as);save(d)}
+ if(b.dataset.deleteMatch){let [lid,mid]=b.dataset.deleteMatch.split('|'),l=d.leagues.find(x=>x.id===Number(lid));if(confirm('Hapus fixture?')){l.matches=l.matches.filter(m=>m.id!==Number(mid));save(d)}}
+});
+(async()=>{render();renderTournamentLink();$('adminLogin').style.display='grid';const {data:sessionData}=await supabaseClient.auth.getSession();if(sessionData.session){try{await startAdminSession(sessionData.session.user)}catch(err){await supabaseClient.auth.signOut();$('adminLogin').style.display='grid';$('loginError').textContent=err.message||'Silakan login ulang.'}}})();
+</script>
+</body></html>
