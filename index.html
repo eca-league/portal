@@ -781,6 +781,74 @@ button:focus-visible,a:focus-visible,select:focus-visible{
 .leagueSubmitButton{flex:0 0 auto;min-width:205px;min-height:42px;padding:11px 17px;border:0;border-radius:11px;background:linear-gradient(135deg,#ffdc78,#f1b83f);color:#182033;font-size:10px;font-weight:950;letter-spacing:.07em;cursor:pointer}
 .leagueSubmitButton:disabled{opacity:.52;cursor:not-allowed}
 @media(max-width:650px){.leagueSubmitBanner{display:grid;gap:12px;padding:14px}.leagueSubmitButton{width:100%;min-width:0}}
+
+
+/* Mobile refinement: League submission CTA */
+.leagueSubmitBanner{
+  align-items:center;
+  gap:18px;
+  padding:16px 18px;
+  border-color:rgba(91,151,204,.42);
+  background:linear-gradient(115deg,rgba(20,43,69,.98),rgba(11,25,44,.98));
+  box-shadow:0 10px 24px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.035);
+}
+.leagueSubmitCopy{flex:1;min-width:0;gap:4px}
+.leagueSubmitCopy strong{font-size:13px;letter-spacing:.01em}
+.leagueSubmitCopy small{font-size:10px;line-height:1.55}
+.leagueSubmitButton{
+  min-width:190px;
+  min-height:44px;
+  padding:11px 18px;
+  border:1px solid rgba(255,225,151,.55);
+  border-radius:10px;
+  background:linear-gradient(135deg,#ffe08a 0%,#f4c45a 52%,#dfaa3c 100%);
+  color:#182235;
+  box-shadow:0 5px 14px rgba(218,166,57,.16),inset 0 1px rgba(255,255,255,.45);
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.09em;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.leagueSubmitButton:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(218,166,57,.24),inset 0 1px rgba(255,255,255,.5)}
+.leagueSubmitButton:not(:disabled):active{transform:translateY(0)}
+.leagueSubmitButton:focus-visible{outline:2px solid #70dcff;outline-offset:3px}
+.leagueSubmitButton:disabled{
+  opacity:1;
+  border-color:#40536d;
+  background:linear-gradient(135deg,#263a54,#1c2c43);
+  color:#9aacc5;
+  box-shadow:inset 0 1px rgba(255,255,255,.035);
+  cursor:not-allowed;
+}
+@media(max-width:650px){
+  .leagueSubmitBanner{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:12px;
+    padding:14px;
+    margin-bottom:14px;
+    border-radius:14px;
+  }
+  .leagueSubmitCopy{align-self:center}
+  .leagueSubmitCopy strong{font-size:12px}
+  .leagueSubmitCopy small{font-size:9px;line-height:1.5}
+  .leagueSubmitButton{
+    width:auto;
+    min-width:132px;
+    min-height:42px;
+    padding:10px 12px;
+    border-radius:9px;
+    font-size:9px;
+    letter-spacing:.055em;
+    white-space:nowrap;
+  }
+}
+@media(max-width:360px){
+  .leagueSubmitBanner{grid-template-columns:minmax(0,1fr);gap:10px}
+  .leagueSubmitButton{width:100%;min-width:0}
+}
+
 </style></head><body>
 <main class="wrap">
 <header class="top">
@@ -814,7 +882,7 @@ function render(){
  document.getElementById('allMatches').innerHTML=games.length?games.map(matchCard).join(''):'<div class="emptyState">No matches yet.</div>';
  const activeLeagues=d.leagues.filter(l=>!isLeagueArchived(l)),archivedLeagues=d.leagues.filter(isLeagueArchived);
  const submitUrl=String(d.leagueSubmitUrl||'').trim(),submitOpen=d.leagueSubmitOpen===true&&!!submitUrl;
- document.getElementById('memberLeague').innerHTML=`<div class="leagueSubmitBanner"><div class="leagueSubmitCopy"><strong>${submitOpen?'Submit League Open':'Submit League Closed'}</strong><small>${submitOpen?'Pendaftaran League sedang dibuka. Tekan tombol untuk mengisi formulir.':'Registration is temporarily closed. Please check back later.'}</small></div><button type="button" class="leagueSubmitButton" data-submit-league ${submitOpen?'':'disabled'}>SUBMIT LEAGUE</button></div>`+(activeLeagues.length?activeLeagues.map(l=>`<section class="panel"><div class="panelHead"><h3>${esc(l.name)}</h3><span class="badge">LEAGUE</span></div><p class="muted">Play Time: ${esc(dateRange(l))}</p>${(()=>{const total=(l.matches||[]).length,done=(l.matches||[]).filter(m=>m.homeScore!=null&&m.awayScore!=null).length,pct=total?Math.round(done/total*100):0;return `<div style="margin:14px 0 18px;padding:13px;background:#0b1729;border:1px solid var(--line);border-radius:11px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px"><b>LEAGUE PROGRESS</b><strong style="color:var(--gold)">${done}/${total} Matches Completed</strong></div><div style="height:9px;background:#263b56;border-radius:99px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--lime);border-radius:99px"></div></div><small class="muted">${pct}% Done</small></div>`})()}${championAward(standingsData(l))}<h3 style="margin-top:18px">STANDINGS</h3><div class="tableWrap"><table class="dataTable standingsTable"><thead><tr><th>#</th><th>TEAM</th><th>P</th><th class="desktopStat">W</th><th class="desktopStat">D</th><th class="desktopStat">L</th><th class="desktopStat">GF</th><th class="desktopStat">GA</th><th>GD</th><th>PTS</th></tr></thead><tbody>${(l.teams||[]).map((t,i)=>{let ms=(l.matches||[]).filter(m=>(m.home===t.name||m.away===t.name)&&m.homeScore!=null&&m.awayScore!=null),w=0,dr=0,lo=0,gf=0,ga=0;ms.forEach(m=>{let home=m.home===t.name,sc=Number(home?m.homeScore:m.awayScore),oc=Number(home?m.awayScore:m.homeScore);gf+=sc;ga+=oc;if(sc>oc)w++;else if(sc===oc)dr++;else lo++});return {name:t.name,p:w+dr+lo,w,d:dr,l:lo,gf,ga,gd:gf-ga,pts:w*3+dr}}).sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf).map((t,i)=>{let id='standing-'+i+'-'+Math.random().toString(36).slice(2,7),gd=t.gd>0?'+'+t.gd:String(t.gd);return `<tr class="standingMainRow ${i===0?"rankGold":i===1?"rankSilver":i===2?"rankBronze":""}" data-standing-row="${id}" tabindex="0" aria-label="Lihat statistik ${esc(t.name)}"><td><b>${i+1}</b></td><td><button type="button" class="teamToggle" data-standing-toggle="${id}" aria-controls="${id}" aria-expanded="false">${esc(t.name)}</button></td><td>${t.p}</td><td class="desktopStat">${t.w}</td><td class="desktopStat">${t.d}</td><td class="desktopStat">${t.l}</td><td class="desktopStat">${t.gf}</td><td class="desktopStat">${t.ga}</td><td class="${t.gd>0?'gdPositive':t.gd<0?'gdNegative':''}">${gd}</td><td><b>${t.pts}</b></td></tr><tr class="detailRow" id="${id}" hidden><td colspan="10"><div class="detailStats"><span>W <b>${t.w}</b></span><span>D <b>${t.d}</b></span><span>L <b>${t.l}</b></span><span>GF <b>${t.gf}</b></span><span>GA <b>${t.ga}</b></span></div></td></tr>`}).join('')}</tbody></table></div><h3 style="margin-top:18px">FIXTURES</h3>${(l.matches||[]).length?l.matches.map(m=>matchCard({...m,league:l.name,kind:'LEAGUE'})).join(''):'<div class="emptyState">No matches yet.</div>'}</section>`).join(''):'<div class="emptyState">No active leagues.</div>');
+ document.getElementById('memberLeague').innerHTML=`<div class="leagueSubmitBanner"><div class="leagueSubmitCopy"><strong>${submitOpen?'Submit League Open':'Submit League Closed'}</strong><small>${submitOpen?'League registration is open! Click below to register.':'Registration is temporarily closed. Please check back later.'}</small></div><button type="button" class="leagueSubmitButton" data-submit-league ${submitOpen?'':'disabled'}>SUBMIT LEAGUE</button></div>`+(activeLeagues.length?activeLeagues.map(l=>`<section class="panel"><div class="panelHead"><h3>${esc(l.name)}</h3><span class="badge">LEAGUE</span></div><p class="muted">Play Time: ${esc(dateRange(l))}</p>${(()=>{const total=(l.matches||[]).length,done=(l.matches||[]).filter(m=>m.homeScore!=null&&m.awayScore!=null).length,pct=total?Math.round(done/total*100):0;return `<div style="margin:14px 0 18px;padding:13px;background:#0b1729;border:1px solid var(--line);border-radius:11px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px"><b>LEAGUE PROGRESS</b><strong style="color:var(--gold)">${done}/${total} Matches Completed</strong></div><div style="height:9px;background:#263b56;border-radius:99px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--lime);border-radius:99px"></div></div><small class="muted">${pct}% Done</small></div>`})()}${championAward(standingsData(l))}<h3 style="margin-top:18px">STANDINGS</h3><div class="tableWrap"><table class="dataTable standingsTable"><thead><tr><th>#</th><th>TEAM</th><th>P</th><th class="desktopStat">W</th><th class="desktopStat">D</th><th class="desktopStat">L</th><th class="desktopStat">GF</th><th class="desktopStat">GA</th><th>GD</th><th>PTS</th></tr></thead><tbody>${(l.teams||[]).map((t,i)=>{let ms=(l.matches||[]).filter(m=>(m.home===t.name||m.away===t.name)&&m.homeScore!=null&&m.awayScore!=null),w=0,dr=0,lo=0,gf=0,ga=0;ms.forEach(m=>{let home=m.home===t.name,sc=Number(home?m.homeScore:m.awayScore),oc=Number(home?m.awayScore:m.homeScore);gf+=sc;ga+=oc;if(sc>oc)w++;else if(sc===oc)dr++;else lo++});return {name:t.name,p:w+dr+lo,w,d:dr,l:lo,gf,ga,gd:gf-ga,pts:w*3+dr}}).sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf).map((t,i)=>{let id='standing-'+i+'-'+Math.random().toString(36).slice(2,7),gd=t.gd>0?'+'+t.gd:String(t.gd);return `<tr class="standingMainRow ${i===0?"rankGold":i===1?"rankSilver":i===2?"rankBronze":""}" data-standing-row="${id}" tabindex="0" aria-label="Lihat statistik ${esc(t.name)}"><td><b>${i+1}</b></td><td><button type="button" class="teamToggle" data-standing-toggle="${id}" aria-controls="${id}" aria-expanded="false">${esc(t.name)}</button></td><td>${t.p}</td><td class="desktopStat">${t.w}</td><td class="desktopStat">${t.d}</td><td class="desktopStat">${t.l}</td><td class="desktopStat">${t.gf}</td><td class="desktopStat">${t.ga}</td><td class="${t.gd>0?'gdPositive':t.gd<0?'gdNegative':''}">${gd}</td><td><b>${t.pts}</b></td></tr><tr class="detailRow" id="${id}" hidden><td colspan="10"><div class="detailStats"><span>W <b>${t.w}</b></span><span>D <b>${t.d}</b></span><span>L <b>${t.l}</b></span><span>GF <b>${t.gf}</b></span><span>GA <b>${t.ga}</b></span></div></td></tr>`}).join('')}</tbody></table></div><h3 style="margin-top:18px">FIXTURES</h3>${(l.matches||[]).length?l.matches.map(m=>matchCard({...m,league:l.name,kind:'LEAGUE'})).join(''):'<div class="emptyState">No matches yet.</div>'}</section>`).join(''):'<div class="emptyState">No active leagues.</div>');
  document.getElementById('archiveCount').textContent=archivedLeagues.length+' SEASON';
  document.getElementById('memberArchive').innerHTML=archivedLeagues.length?`<div class="archiveIntro"><span class="archiveIntroIcon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2.2"/><path d="M3.5 9h17M9 13h6M9 16h6"/></svg></span><div><b>SEASON HISTORY</b><small>Semua rekod league yang telah selesai</small></div></div><div class="archiveSeasonList">${archivedLeagues.map((l,i)=>{const rows=standingsData(l),winner=rows[0],played=(l.matches||[]).filter(m=>m.homeScore!=null&&m.awayScore!=null).length,total=(l.matches||[]).length;return `<details class="archiveSeason"><summary><span class="archiveSeasonIndex">${String(i+1).padStart(2,'0')}</span><span class="archiveSeasonInfo"><b>${esc(l.name)}</b><small>${esc(dateRange(l))}</small><small class="archiveWinner">🏆 ${winner?'Juara: '+esc(winner.name):'Juara belum ditentukan'}</small></span><span class="archiveSeasonStats"><b>${played}/${total}</b><small>MATCH</small></span><span class="archiveArrow" aria-hidden="true"></span></summary><div class="archiveSeasonDetails">${archivedStandings(l)}<h4 class="archiveHistoryTitle">HISTORY MATCH</h4><div class="archiveFixtures">${(l.matches||[]).map(m=>`<div><span>${esc(m.home||'TBD')}</span><b>${m.homeScore??'—'} : ${m.awayScore??'—'}</b><span>${esc(m.away||'TBD')}</span></div>`).join('')||'<small class="muted">No matches yet.</small>'}</div></div></details>`}).join('')}</div>`:'<div class="emptyState">No completed leagues yet.</div>';
  document.getElementById('memberTournament').innerHTML=(d.tournaments.length?d.tournaments.map(t=>`<section class="panel"><div class="panelHead"><h3>${esc(t.name)}</h3><span class="badge">${esc(t.status||'UPCOMING')}</span></div><p class="muted">${esc(t.description||'')}</p>${(t.matches||[]).length?t.matches.map(m=>matchCard({...m,league:t.name,kind:'TOURNAMENT'})).join(''):'<div class="emptyState">Informasi pertandingan tournament belum tersedia.</div>'}</section>`).join(''):'<div class="emptyState">Belum ada informasi tournament.</div>');
