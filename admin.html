@@ -705,11 +705,11 @@ input,select,textarea{max-width:100%;min-width:0}
 </section>
 <section id="page-league" class="adminView"><section class="card"><div class="cardHead"><div><h2>LEAGUE MANAGEMENT</h2><p class="muted"></p></div><span class="pill">LEAGUE</span></div><div class="formRow"><label class="field">NAME LEAGUE<input id="leagueName" placeholder="Contoh: PRO ECA"></label><label class="field">DATE OF PLAY<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="leagueStart" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" aria-label="Tanggal mulai"><input id="leagueEnd" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" aria-label="Tanggal selesai"></div></label><label class="field">CAPACITY<input id="leagueCapacity" type="number" min="2" max="100" value="10" placeholder="10"></label><button class="primary" id="createLeague">Create League</button></div></section><div id="leagueAdmin"></div></section>
 </main>
-<div id="adminLogin" class="eca-login-overlay" style="position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:#050914ef"><form id="loginForm" class="eca-login-card" style="width:min(420px,100%)">
+<div id="adminLogin" class="eca-login-overlay" style="position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:#050914ef"><form id="loginForm" class="eca-login-card" autocomplete="on" style="width:min(420px,100%)">
  <div class="eca-login-brand"><img src="" alt="ECA Alliance Logo"></div>
  <div class="eca-login-heading"><div class="eca-login-kicker">ECA LEAGUE MANAGEMENT</div><h2>ECA <span>PORTAL</span></h2><p>Admin Login</p></div>
- <label class="eca-login-field">Email<input id="adminEmail" type="email" autocomplete="username" placeholder="Masukkan email admin" required></label>
- <label class="eca-login-field">Password<input id="adminPassword" type="password" autocomplete="current-password" placeholder="Masukkan password" required></label>
+ <label class="eca-login-field">Email<input id="adminEmail" name="username" type="email" autocomplete="username" placeholder="Masukkan email admin" required></label>
+ <label class="eca-login-field">Password<input id="adminPassword" name="password" type="password" autocomplete="current-password" placeholder="Masukkan password" required></label>
  <p class="eca-login-message" id="loginError"></p>
  <button class="eca-login-submit" type="submit">Masuk <span>→</span></button>
  <p class="eca-login-note">Akses terbatas hanya untuk admin yang berwenang.</p>
